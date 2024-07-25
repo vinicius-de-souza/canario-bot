@@ -11,8 +11,8 @@ const client = new Client({
   ],
 });
 
-const DISCORD_TOKEN = "YOUR_DISCORD_BOT_TOKEN";
-const CHANNEL_ID = "YOUR_DISCORD_CHANNEL_ID"; // The channel where the threads are created
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+const CHANNEL_ID = "1266074055702876192"; // The channel where the threads are created
 
 // Express server setup
 const app = express();
