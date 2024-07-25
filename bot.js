@@ -50,10 +50,12 @@ const findOrCreateThread = async (issueKey, issueSummary) => {
       // Cria um novo thread se não existir
       thread = await channel.threads.create({
         name: `${issueKey} - ${issueSummary}`,
-        autoArchiveDuration: 10080, // Arquiva automaticamente após 60 minutos de inatividade
-        reason: `Thread para a issue ${issueKey}`,
+        autoArchiveDuration: 4320, // Arquiva automaticamente após 3 dias de inatividade
+        reason: `Thread para o problema ${issueKey}`,
       });
-      logger.info(`Thread criada: ${thread.name}`);
+      logger.info(`Thread criada: ${thread.id}`);
+    } else {
+      logger.info(`Thread existente encontrada: ${thread.id}`);
     }
 
     return thread;
@@ -63,15 +65,38 @@ const findOrCreateThread = async (issueKey, issueSummary) => {
   }
 };
 
+// Função para encontrar um thread pelo issueKey
+const findThreadByIssueKey = async (issueKey) => {
+  try {
+    const channel = await client.channels.fetch(CHANNEL_ID);
+
+    const threads = await channel.threads.fetchActive();
+    const thread = threads.threads.find((thread) =>
+      thread.name.includes(issueKey)
+    );
+
+    if (!thread) {
+      logger.info(`Nenhum thread encontrado para o issueKey ${issueKey}`);
+    } else {
+      logger.info(`Thread encontrada: ${thread.id}`);
+    }
+
+    return thread;
+  } catch (error) {
+    logger.error(`Erro ao encontrar thread: ${error.message}`);
+    throw error;
+  }
+};
+
 // Endpoint para receber webhooks do Jira
 app.post("/jira-webhook", async (req, res) => {
   try {
-    logger.info("Webhook received:", req.body);
+    logger.info("Recebido webhook:", req.body);
 
     const issue = req.body.issue;
     if (!issue) {
-      logger.warn("Sem dados da issue no webhook");
-      return res.status(400).send("Bad request: Sem dados da issue");
+      logger.warn("Sem dados de problema no webhook");
+      return res.status(400).send("Requisição ruim: Sem dados de problema");
     }
 
     const issueKey = issue.key;
@@ -79,19 +104,16 @@ app.post("/jira-webhook", async (req, res) => {
     const issueStatus = issue.fields.status.name;
 
     if (issueStatus === "TO DO") {
-      // Não faz nada se o problema estiver em "TO DO"
       return res.status(200).send("OK");
     }
 
-    const message = `Issue ${issueKey} atualizado para o status ${issueStatus}`;
+    const message = `Problema ${issueKey} atualizado para o status ${issueStatus}`;
 
     let thread;
 
     if (issueStatus === "IN PROGRESS") {
-      // Encontrar ou criar um thread
       thread = await findOrCreateThread(issueKey, issueSummary);
     } else if (issueStatus === "DONE") {
-      // Encontrar o thread existente
       thread = await findThreadByIssueKey(issueKey);
       if (!thread) {
         logger.warn(`Thread para o problema ${issueKey} não encontrada`);
@@ -99,10 +121,15 @@ app.post("/jira-webhook", async (req, res) => {
       }
     }
 
-    // Enviar mensagem para o thread específico
-    await thread.send(message);
-    logger.info(`Mensagem enviada para o thread ${thread.id}: ${message}`);
-    res.status(200).send("OK");
+    // Verifica se o thread existe antes de tentar enviar a mensagem
+    if (thread) {
+      await thread.send(message);
+      logger.info(`Mensagem enviada para o thread ${thread.id}: ${message}`);
+      res.status(200).send("OK");
+    } else {
+      logger.error(`Thread é indefinida para o problema ${issueKey}`);
+      res.status(500).send("Erro interno do servidor");
+    }
   } catch (error) {
     logger.error(`Erro ao processar a requisição do webhook: ${error.message}`);
     res.status(500).send("Erro interno do servidor");
@@ -111,13 +138,13 @@ app.post("/jira-webhook", async (req, res) => {
 
 client
   .login(DISCORD_TOKEN)
-  .then(() => logger.info("Successfully logged in to Discord!"))
-  .catch((error) => logger.error(`Error logging to Discord: ${error.message}`));
+  .then(() => logger.info("Bot do Discord logado com sucesso"))
+  .catch((error) => logger.error(`Erro ao logar no Discord: ${error.message}`));
 
 client.once("ready", () => {
-  logger.info(`Logged as ${client.user.tag}!`);
+  logger.info(`Logado como ${client.user.tag}!`);
 });
 
 app.listen(PORT, () => {
-  logger.info(`Listening on port ${PORT}`);
+  logger.info(`Servidor ouvindo na porta ${PORT}`);
 });
