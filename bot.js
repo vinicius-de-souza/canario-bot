@@ -1,15 +1,16 @@
-const { Client, Intents } = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
 const express = require("express");
 const bodyParser = require("body-parser");
 
 // Discord bot setup
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_THREADS,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent, // Use MessageContent for message content
   ],
 });
+
 const DISCORD_TOKEN = "YOUR_DISCORD_BOT_TOKEN";
 const CHANNEL_ID = "YOUR_DISCORD_CHANNEL_ID"; // The channel where the threads are created
 
