@@ -70,6 +70,14 @@ const findThreadByIssueKey = async (issueKey) => {
   try {
     const channel = await client.channels.fetch(CHANNEL_ID);
 
+    if (
+      channel.type !== ChannelType.GuildText &&
+      channel.type !== ChannelType.GuildNews
+    ) {
+      throw new Error("O canal não é um canal de texto");
+    }
+
+    // Obtém threads ativas
     const threads = await channel.threads.fetchActive();
     const thread = threads.threads.find((thread) =>
       thread.name.includes(issueKey)
