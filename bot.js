@@ -28,42 +28,55 @@ const app = express();
 app.use(bodyParser.json());
 
 // Função para encontrar ou criar um thread
-const findOrCreateThread = async (issueKey, issueSummary) => {
+async function findOrCreateThread(issueKey, issueSummary) {
   try {
+    logger.info(`Finding or creating thread for issue: ${issueKey}`);
+
     const channel = await client.channels.fetch(CHANNEL_ID);
 
-    // Verifica se o canal é um canal de texto ou de notícias
-    if (
-      channel.type !== ChannelType.GuildText &&
-      channel.type !== ChannelType.GuildNews
-    ) {
+    // Verify channel type and log details
+    if (channel.type === ChannelType.GuildText) {
+      logger.info(`Fetched channel: ${channel.name} (Text Channel)`);
+    } else {
+      logger.error(`Channel with ID ${CHANNEL_ID} is not a Text Channel`);
       throw new Error("O canal não é um canal de texto");
     }
 
-    // Obtém threads ativas
+    // Log attempt to fetch active threads
+    logger.info(`Fetching active threads in channel: ${channel.name}`);
+
     const threads = await channel.threads.fetchActive();
+
+    // Log number of active threads found
+    logger.info(`Found ${threads.threads.size} active threads`);
+
     let thread = threads.threads.find((thread) =>
       thread.name.includes(issueKey)
     );
 
     if (!thread) {
-      // Cria um novo thread se não existir
+      // Log attempt to create thread
+      logger.info(`Creating thread for issue: ${issueKey}`);
+
       thread = await channel.threads.create({
         name: `${issueKey} - ${issueSummary}`,
-        autoArchiveDuration: 4320, // Arquiva automaticamente após 3 dias de inatividade
+        autoArchiveDuration: 4320,
         reason: `Thread para o problema ${issueKey}`,
       });
-      logger.info(`Thread criada: ${thread.id}`);
+
+      logger.info(`Thread created: ${thread.id} - ${thread.name}`);
     } else {
-      logger.info(`Thread existente encontrada: ${thread.id}`);
+      logger.info(
+        `Existing thread found for issue: ${issueKey} - ${thread.id}`
+      );
     }
 
     return thread;
   } catch (error) {
-    logger.error(`Erro ao encontrar ou criar thread: ${error.message}`);
+    logger.error(`Error finding or creating thread: ${error.message}`);
     throw error;
   }
-};
+}
 
 // Função para encontrar um thread pelo issueKey
 const findThreadByIssueKey = async (issueKey) => {
