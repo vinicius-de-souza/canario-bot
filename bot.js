@@ -126,7 +126,7 @@ app.post("/jira-webhook", async (req, res) => {
       `Recebido webhook: ${issueKey} - ${issueSummary} - ${issueStatus}`
     );
 
-    if (issueStatus === "TO DO") {
+    if (issueStatus === "To do") {
       return res.status(200).send("OK");
     }
 
@@ -134,9 +134,9 @@ app.post("/jira-webhook", async (req, res) => {
 
     let thread;
 
-    if (issueStatus === "IN PROGRESS") {
+    if (issueStatus === "In Progress") {
       thread = await findOrCreateThread(issueKey, issueSummary);
-    } else if (issueStatus === "DONE") {
+    } else if (issueStatus === "Done") {
       thread = await findThreadByIssueKey(issueKey);
       if (!thread) {
         logger.warn(`Thread para o problema ${issueKey} não encontrada`);
