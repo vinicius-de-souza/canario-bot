@@ -112,8 +112,6 @@ const findThreadByIssueKey = async (issueKey) => {
 // Endpoint para receber webhooks do Jira
 app.post("/jira-webhook", async (req, res) => {
   try {
-    logger.info("Recebido webhook:", req.body);
-
     const issue = req.body.issue;
     if (!issue) {
       logger.warn("Sem dados de problema no webhook");
@@ -123,6 +121,10 @@ app.post("/jira-webhook", async (req, res) => {
     const issueKey = issue.key;
     const issueSummary = issue.fields.summary;
     const issueStatus = issue.fields.status.name;
+
+    logger.info(
+      `Recebido webhook: ${issueKey} - ${issueSummary} - ${issueStatus}`
+    );
 
     if (issueStatus === "TO DO") {
       return res.status(200).send("OK");
