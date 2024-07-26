@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "bot.mjs",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "body-parser": "^1.19.0",
