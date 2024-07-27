@@ -1,4 +1,8 @@
 {
   "channelId": "1266073955765063716",
-  "status": ["To Do", "In Progress", "Done"]
+  "userMentions": {
+    "TESTE DO USUÁRIO": ["1127931331909800017"],
+    "TESTE DE QUALIDADE": []
+  },
+  "atlassianProjectUrl": "https://vinibot19.atlassian.net"
 }

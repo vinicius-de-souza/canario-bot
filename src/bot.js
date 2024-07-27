@@ -1,7 +1,5 @@
 const { Client, GatewayIntentBits } = require("discord.js");
 const logger = require("./utils/logger");
-const { findOrCreateThread } = require("./utils/threadManager");
-const config = require("../config/config.json");
 require("dotenv").config();
 
 const client = new Client({

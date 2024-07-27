@@ -1,6 +1,0 @@
-CURRENT RULES:
-
-Ignore issues in the "TO DO" column.
-Create or find a thread when the issue is moved to the "IN PROGRESS" column.
-Send a message to the thread if it exists or create a new thread with the issue's title.
-Send a message to the thread if the issue is moved to the "DONE" column, without creating a new thread.
