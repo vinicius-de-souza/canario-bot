@@ -1,6 +1,6 @@
-# Discord Jira Bot
+# Canário Bot
 
-Discord Jira Bot is a Discord bot designed to integrate with Jira through webhooks. It provides functionalities to monitor issue updates, send messages when issues are updated, find or create threads, and configure notifications for specific issue statuses. The bot uses Express, discord.js, and winston for logging.
+Canário Bot is a Discord bot designed to integrate with Jira through webhooks. It provides functionalities to monitor issue updates, send messages when issues are updated, find or create threads, and configure notifications for specific issue statuses. The bot uses Express, discord.js, and winston for logging.
 
 ## Features
 
