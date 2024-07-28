@@ -1,8 +1,11 @@
 {
   "channelId": "1266073955765063716",
   "userMentions": {
-    "TESTE DO USUÁRIO": ["1127931331909800017"],
-    "TESTE DE QUALIDADE": []
+    "TESTE DO USUÁRIO": "",
+    "TESTE DE QUALIDADE": ""
   },
-  "atlassianProjectUrl": "https://vinibot19.atlassian.net"
+  "atlassianProjectUrl": "https://vinibot19.atlassian.net",
+  "prefix": "!",
+  "botID": "1266089641338081405",
+  "serverID": "1266073955765063713"
 }

@@ -2,6 +2,7 @@ const client = require("../bot");
 const logger = require("../utils/logger");
 const { EmbedBuilder } = require("discord.js");
 const config = require("../../config/config.json");
+const { getConfig } = require("../utils/config");
 
 async function findOrCreateThread(identifier, summary) {
   try {
@@ -35,7 +36,7 @@ async function findOrCreateThread(identifier, summary) {
   }
 }
 
-async function createMessage(issueStatus, issueIdentifier) {
+async function createUpdateIssueEmbed(issueStatus, issueIdentifier) {
   const embed = new EmbedBuilder()
     .setURL(config.atlassianProjectUrl + "/browse/" + issueIdentifier)
     .setColor("#42c790")
@@ -49,12 +50,22 @@ async function createMessage(issueStatus, issueIdentifier) {
   return embed;
 }
 
-function getUserMentionForStatus(issueStatus) {
-  const userMentions = config.userMentions[issueStatus] || [];
-  if (userMentions.length > 0) {
-    return userMentions.map((userId) => `<@${userId}>`).join(" ");
-  }
-  return null;
+async function getUserMentionForStatus(issueStatus) {
+  const config = getConfig();
+  const userMentions = Object.entries(config.userMentions).filter(
+    ([status, userId]) => userId
+  );
+
+  const mentions = userMentions
+    .filter(([status]) => status === issueStatus)
+    .map(([, userId]) => `<@${userId}>`)
+    .join(" ");
+
+  return mentions || null;
 }
 
-module.exports = { findOrCreateThread, createMessage, getUserMentionForStatus };
+module.exports = {
+  findOrCreateThread,
+  createUpdateIssueEmbed,
+  getUserMentionForStatus,
+};

@@ -1,6 +1,6 @@
 const {
   findOrCreateThread,
-  createMessage,
+  createUpdateIssueEmbed,
   getUserMentionForStatus,
 } = require("../services/discordService");
 const logger = require("../utils/logger");
@@ -25,9 +25,9 @@ async function handleIssueUpdate(issue) {
   // Check if the thread exists or create a new one
   const thread = await findOrCreateThread(issueKey, issueSummary);
 
-  const message = await createMessage(issueStatus, issueKey);
+  const message = await createUpdateIssueEmbed(issueStatus, issueKey);
 
-  const userMention = getUserMentionForStatus(issueStatus);
+  const userMention = await getUserMentionForStatus(issueStatus);
 
   if (thread) {
     await thread.send({ embeds: [message] });
