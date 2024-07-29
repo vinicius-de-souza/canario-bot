@@ -23,7 +23,7 @@ const handleNotificarCommand = async (interaction) => {
 
   const embed = new EmbedBuilder()
     .setColor("#42c790")
-    .setTitle("Nova Configuração de Notificação")
+    .setTitle("**Nova Configuração de Notificação**")
     .setDescription(description)
     .setTimestamp()
     .setFooter({
@@ -53,7 +53,7 @@ const handleListarNotificacoesCommand = async (interaction, client) => {
 
   const embed = new EmbedBuilder()
     .setColor("#42c790")
-    .setTitle("Configuração de Notificação Atual")
+    .setTitle("**Configuração de Notificação Atual**")
     .setDescription(
       description || "Nenhuma configuração de notificação definida."
     )
